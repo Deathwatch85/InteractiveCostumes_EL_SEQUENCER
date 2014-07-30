@@ -15,12 +15,12 @@ const int dataPin       = 12; //11
 const int latchPin      = 11; //8
 
 // initialize led pins
-const int redR          = A0;
-const int greenR        = A1;
-const int blueR         = A2;
-const int redL          = A3;
-const int greenL        = A4;
-const int blueL         = A5;
+int redR          = A0;
+int greenR        = A1;
+int blueR         = A2;
+int redL          = A3;
+int greenL        = A4;
+int blueL         = A5;
 
 // variables for the color values
 int redRVal   = 0;
@@ -30,7 +30,7 @@ int redLVal   = 0;
 int greenLVal = 0;
 int blueLVal  = 0;
 
-const int displayButton =  10;
+int displayButton =  10;
 
 // counts the times the button has been pressed
 int buttonCounter = 0;
@@ -81,6 +81,7 @@ void setup() {
 void loop() {
   // read the actual state of the button
   buttonState = digitalRead(displayButton);
+  val = buttonState;
   //Serial.println(val); // only for debugging
   oxyLoss();
   // if buttonState is unequal to lastBstate
@@ -88,23 +89,30 @@ void loop() {
   if(buttonState != lastBState) {
     // if button has been pressed increase counter by 1
     if(buttonState == HIGH) {
-      buttonCounter++;
+      //buttonCounter++;
       oxyGain();
+      delay(10);
     }
+    
   }
+  buttonCounter++;
+  
   // current buttonState gets assigned to lastBState
   lastBState = buttonState;
+  Serial.println(buttonCounter);
 
   // depending on the button state functions are called
   if(buttonCounter % 2 == 0) {
     rightActiveBlueGreen();
     rightActiveGreenBlue();
     leftRegenerate();
+    buttonState = 0;
   }
   else if(buttonCounter % 2 == 1) {
     leftActiveBlueGreen();
     leftActiveGreenBlue();
     rightRegenerate();
+    buttonState = 1;
   }
 
 }
@@ -215,9 +223,37 @@ void leftActiveGreenBlue() {
 }
 
 void rightRegenerate() {
+  
 
 }
 
 void leftRegenerate() {
 
+}
+
+void testing() {
+  redRVal    = 0;
+  blueRVal   = 0;
+  greenRVal  = 180;
+
+  for(int i = 0; i < 180; i++) {
+    blueRVal  += 1;
+    greenRVal -= 1;
+    analogWrite(blueR, 180 - blueRVal);
+    analogWrite(greenR, 180 - greenRVal);
+    delay(8);
+  }
+  
+  redRVal   = 0;
+  blueRVal  = 180;
+  greenRVal = 0;
+
+  for(int i = 0; i < 180; i++) {
+    blueRVal  -= 1;
+    greenRVal += 1;
+    analogWrite(blueR, 180 - blueRVal);
+    analogWrite(greenR, 180 - greenRVal);
+    delay(8);
+  }
+  
 }
